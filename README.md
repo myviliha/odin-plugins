@@ -41,6 +41,11 @@ gemini extensions install https://github.com/myviliha/odin-plugins
 
 Gemini CLI opens your browser to sign in to Viliha the first time an ODIN tool runs.
 
+## Any agent that reads Agent Plugins 1.0
+
+`odin/` is also a portable [Agent Plugins 1.0](https://github.com/agentplugins/agent-plugins-spec) package (`plugin.json` and
+`mcp.json`): a tool that supports the standard installs it from this repository the way it installs any plugin.
+
 ## Claude (web and desktop) and other agents
 
 Add a connector with the address `https://api.viliha.com/mcp` and sign in when asked. The Claude directory listing is on the
