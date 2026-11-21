@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/odin-icon.png" width="96" alt="ODIN"></p>
+<p align="center"><img src="odin/assets/odin-icon.png" width="96" alt="ODIN"></p>
 
 <h1 align="center">ODIN plugins</h1>
 
@@ -24,9 +24,32 @@ curl -fsSL https://api.viliha.com/install | sh
 It asks for your personal token (Viliha console, Settings, API tokens) and keeps it in the macOS Keychain, or in
 `~/.config/viliha/token` readable only by you. Until it is signed in, each session tells you so at its start.
 
-## ChatGPT, Claude (web and desktop) and other agents
+## Codex and ChatGPT
 
-Add a connector with the address `https://api.viliha.com/mcp` and sign in when asked. Directory listings are on the way.
+```
+codex plugin marketplace add myviliha/odin-plugins
+```
+
+Then install **ODIN** from the plugin list and sign in with your Viliha account when asked. The ChatGPT and Codex plugin
+directory listing is on the way; until then, in ChatGPT add a connector with the address `https://api.viliha.com/mcp`.
+
+## Gemini CLI
+
+```
+gemini extensions install https://github.com/myviliha/odin-plugins
+```
+
+Gemini CLI opens your browser to sign in to Viliha the first time an ODIN tool runs.
+
+## Claude (web and desktop) and other agents
+
+Add a connector with the address `https://api.viliha.com/mcp` and sign in when asked. The Claude directory listing is on the
+way.
+
+## Quick commands
+
+ODIN's quick commands (status, pause, project, who, assign, handoff, updates and the rest) come with the connection itself, so
+every agent that shows a server's prompts offers them; Claude Code also has them as `/odin:` commands.
 
 ## What ODIN does in Claude Code
 
