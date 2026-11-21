@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "odin": {
+      "type": "http",
+      "url": "https://api.viliha.com/mcp"
+    }
+  }
+}

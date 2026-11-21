@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "SessionStart": [{"hooks": [{"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gate.mjs\"", "timeout": 5}, {"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stream.mjs\"", "timeout": 5}]}],
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stream.mjs\"", "timeout": 5}]}],
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gate.mjs\"", "timeout": 5}]}],
+    "PostToolUse": [{"hooks": [{"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stream.mjs\"", "timeout": 5}, {"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/watch.mjs\"", "timeout": 5}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stream.mjs\"", "timeout": 5}]}]
+  }
+}

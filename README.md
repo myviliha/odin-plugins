@@ -1,0 +1,44 @@
+<p align="center"><img src="assets/odin-icon.png" width="96" alt="ODIN"></p>
+
+<h1 align="center">ODIN plugins</h1>
+
+<p align="center">Your company's rules and decisions in every AI agent. By <a href="https://viliha.com">Viliha</a>.</p>
+
+ODIN gives your AI agents your company's projects, rules and decisions, checks each action against them before it runs, and
+records the work for your team. Every agent connects to the same hosted service, `https://api.viliha.com/mcp`, and signs in with
+your Viliha account.
+
+## Claude Code
+
+```
+/plugin marketplace add myviliha/odin-plugins
+/plugin install odin@viliha
+```
+
+Then sign the hooks in once, so ODIN's gate runs in every session:
+
+```
+curl -fsSL https://api.viliha.com/install | sh
+```
+
+It asks for your personal token (Viliha console, Settings, API tokens) and keeps it in the macOS Keychain, or in
+`~/.config/viliha/token` readable only by you. Until it is signed in, each session tells you so at its start.
+
+## ChatGPT, Claude (web and desktop) and other agents
+
+Add a connector with the address `https://api.viliha.com/mcp` and sign in when asked. Directory listings are on the way.
+
+## What ODIN does in Claude Code
+
+- **The gate:** before each tool call it asks ODIN whether the action may run; a refusal names what to read first.
+- **The record:** each step of a session is sent to ODIN for your team; nothing is written on your machine, and a prompt's text is
+  kept only if your company turns that on.
+- **The watch:** a file emptied or a tracked file cut to almost nothing is reported as a miss (paths and line counts, never content).
+
+Only work in a repository of one of your company's projects is recorded. `VILIHA_RECORD=off` pauses recording. The plugin's
+details are in [odin/README.md](odin/README.md).
+
+---
+
+ODIN is made by Viliha (RESOLVE LABS PTE. LTD., Singapore). [viliha.com](https://viliha.com) ·
+[Privacy](https://viliha.com/privacy/) · [Terms](https://viliha.com/terms/)

@@ -1,0 +1,17 @@
+{
+  "name": "viliha",
+  "owner": {
+    "name": "Viliha",
+    "url": "https://viliha.com"
+  },
+  "metadata": {
+    "description": "ODIN by Viliha for Claude Code. Add with /plugin marketplace add myviliha/odin-plugins, then /plugin install odin@viliha"
+  },
+  "plugins": [
+    {
+      "name": "odin",
+      "source": "./odin",
+      "description": "Your company's rules and decisions in every session: ODIN checks each action before it runs and records the work for your team."
+    }
+  ]
+}
