@@ -13,6 +13,7 @@ import { existsSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { relayed } from "./relay.mjs";
 import { token } from "./stream.mjs";
 
 /** The tool input the gate needs: what runs and where, without content (an edit's text, a file's body). */
@@ -104,7 +105,8 @@ async function main() {
     if (out) process.stdout.write(JSON.stringify(out));
     return;
   }
-  const out = await answer(input, { send: (path, body) => post(path, body, { auth }) });
+  // Through the relay's open connection when it answers, else directly (research/LOCAL-EDGE-2026-11-21.md).
+  const out = await answer(input, { send: (path, body) => relayed(path, body, { direct: () => post(path, body, { auth }) }) });
   if (out) process.stdout.write(JSON.stringify(out));
 }
 

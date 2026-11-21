@@ -17,6 +17,7 @@ import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { relayed } from "./relay.mjs";
 
 const EDITS = new Set(["Edit", "Write", "MultiEdit", "NotebookEdit"]);
 
@@ -119,7 +120,12 @@ async function main() {
     return;
   }
   if (process.env.VILIHA_RECORD === "off") return;
-  const { body } = await sendRead(toEvent(input, process.env.VILIHA_PROJECT || null, remoteOf(input.cwd ?? process.cwd())));
+  const event = toEvent(input, process.env.VILIHA_PROJECT || null, remoteOf(input.cwd ?? process.cwd()));
+  if (!event) return;
+  // Only the prompt's answer is read (ODIN's routing question, colleagues' updates); every other event is handed to the relay,
+  // which sends it after this hook has returned, so the session never waits for it (research/LOCAL-EDGE-2026-11-21.md).
+  const wait = input.hook_event_name === "UserPromptSubmit";
+  const { body } = await relayed("/v1/events", { events: [event] }, { wait, ms: 2000, direct: () => sendRead(event) });
   const out = askOut(input.hook_event_name, body);
   if (out) process.stdout.write(JSON.stringify(out));
 }
