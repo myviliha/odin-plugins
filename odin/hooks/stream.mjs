@@ -85,6 +85,30 @@ export async function send(event, { api = process.env.VILIHA_API ?? "https://api
   }
 }
 
+/** Send one event and read ODIN's answer: { status, body }, status 0 when the server could not be reached. Never throws. */
+export async function sendRead(event, { api = process.env.VILIHA_API ?? "https://api.viliha.com", auth = token(), fetchImpl = fetch, ms = 2000 } = {}) {
+  if (!event || !auth) return { status: 0, body: {} };
+  const base = api.replace(/\/+$/, "");
+  try {
+    const res = await fetchImpl(`${base}/v1/events`, { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${auth}` }, body: JSON.stringify({ events: [event] }), signal: AbortSignal.timeout(ms) });
+    return { status: res.status, body: await res.json().catch(() => ({})) };
+  } catch {
+    return { status: 0, body: {} };
+  }
+}
+
+/** ODIN's routing question (D-76) for the agent to ask the person, as the prompt hook's added context; null when there is none. */
+export function askOut(hook, body) {
+  if (hook !== "UserPromptSubmit") return null;
+  const ask = body?.ask;
+  const parts = [];
+  if (ask?.question && ask?.id) parts.push(`ODIN asks the person, before you go on: ${ask.question} Ask them in one short line, then call odin_route_answer with id ${ask.id} and the project they choose (or personal if it is not company work).`);
+  // What colleagues noted or handed over since this person's last turn (ODIN-137).
+  if (typeof body?.updates === "string" && body.updates) parts.push(body.updates);
+  if (!parts.length) return null;
+  return { hookSpecificOutput: { hookEventName: "UserPromptSubmit", additionalContext: parts.join("\n\n") } };
+}
+
 async function main() {
   let raw = "";
   for await (const chunk of process.stdin) raw += chunk;
@@ -95,7 +119,9 @@ async function main() {
     return;
   }
   if (process.env.VILIHA_RECORD === "off") return;
-  await send(toEvent(input, process.env.VILIHA_PROJECT || null, remoteOf(input.cwd ?? process.cwd())));
+  const { body } = await sendRead(toEvent(input, process.env.VILIHA_PROJECT || null, remoteOf(input.cwd ?? process.cwd())));
+  const out = askOut(input.hook_event_name, body);
+  if (out) process.stdout.write(JSON.stringify(out));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
