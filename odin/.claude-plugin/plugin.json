@@ -1,6 +1,6 @@
 {
   "name": "odin",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "ODIN by Viliha: your company's projects, rules and decisions in every Claude Code session. It checks each action before it runs, records the work for your team, and reports damage.",
   "author": {
     "name": "Viliha (RESOLVE LABS PTE. LTD.)",
