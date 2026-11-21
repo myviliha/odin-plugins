@@ -69,7 +69,9 @@ export async function answer(input, { env = process.env, place = where, send = p
   if (input.hook_event_name === "SessionStart") {
     const r = await send("/v1/gate/session", { project, remote: at.remote });
     if (r.status !== 200) return r.status === 0 ? { systemMessage: "Viliha could not be reached: this session starts without the project's context, and the gate cannot check its actions." } : null;
-    return { hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: r.body.context } };
+    // Setup not finished (ODIN-136): the person sees it too, at every session's start until it is done or snoozed.
+    const notice = r.body.notice?.say;
+    return { ...(notice ? { systemMessage: notice } : {}), hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: r.body.context } };
   }
   if (input.hook_event_name !== "PreToolUse") return null;
   const r = await send("/v1/gate", { project, ...at, session: input.session_id ?? null, source: "claude-code", tool_name: input.tool_name, tool_input: slim(input.tool_input) });
