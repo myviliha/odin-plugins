@@ -17,5 +17,8 @@
     "audit",
     "mcp",
     "agents"
-  ]
+  ],
+  "icon": "./assets/odin-icon.png",
+  "privacyPolicyUrl": "https://viliha.com/privacy/",
+  "license": "MIT"
 }
