@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "odin",
+  "version": "0.5.0",
+  "description": "Your company's rules and decisions in every AI agent: ask with sources, record decisions, give out work and check it.",
+  "author": {
+    "name": "Viliha (RESOLVE LABS PTE. LTD.)",
+    "email": "support@viliha.com",
+    "url": "https://viliha.com"
+  },
+  "homepage": "https://viliha.com",
+  "repository": "https://github.com/myviliha/odin-plugins",
+  "license": "MIT",
+  "keywords": [
+    "odin",
+    "viliha",
+    "governance",
+    "rules",
+    "decisions",
+    "audit",
+    "mcp",
+    "agents"
+  ]
+}

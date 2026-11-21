@@ -1,0 +1,10 @@
+{
+  "name": "odin",
+  "version": "0.5.0",
+  "description": "Your company's rules and decisions in every AI agent. By Viliha.",
+  "mcpServers": {
+    "odin": {
+      "httpUrl": "https://api.viliha.com/mcp"
+    }
+  }
+}

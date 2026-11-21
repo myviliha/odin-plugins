@@ -1,0 +1,46 @@
+{
+  "name": "odin",
+  "version": "0.5.0",
+  "description": "Your company's rules and decisions in every AI agent: ask with sources, record decisions, give out work and check it, from ChatGPT and Codex.",
+  "author": {
+    "name": "Viliha (RESOLVE LABS PTE. LTD.)",
+    "email": "support@viliha.com",
+    "url": "https://viliha.com"
+  },
+  "homepage": "https://viliha.com",
+  "repository": "https://github.com/myviliha/odin-plugins",
+  "keywords": [
+    "odin",
+    "viliha",
+    "governance",
+    "rules",
+    "decisions",
+    "audit",
+    "mcp",
+    "agents"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ODIN",
+    "developerName": "Viliha",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "shortDescription": "Your company's rules and decisions in every AI agent",
+    "longDescription": "ODIN holds your company's projects, rules, decisions and who does what. Ask it anything about the work and it answers from your company's record with its sources; record a decision or a note; give a task to the right person; and see what changed since you last looked. Every agent connects to the same ODIN with your Viliha account.",
+    "defaultPrompt": [
+      "Ask ODIN what we decided about this, with sources",
+      "What changed in my projects since yesterday?",
+      "Give this task to the right person"
+    ],
+    "logo": "./assets/odin-icon.png",
+    "composerIcon": "./assets/odin-icon.svg",
+    "websiteURL": "https://viliha.com",
+    "privacyPolicyURL": "https://viliha.com/privacy/",
+    "termsOfServiceURL": "https://viliha.com/terms/",
+    "screenshots": []
+  },
+  "license": "MIT"
+}

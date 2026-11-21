@@ -1,0 +1,20 @@
+{
+  "name": "viliha",
+  "interface": {
+    "displayName": "ODIN by Viliha"
+  },
+  "plugins": [
+    {
+      "name": "odin",
+      "source": {
+        "source": "local",
+        "path": "./odin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
