@@ -1,9 +1,9 @@
 {
   "name": "odin",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "description": "Your company's rules and decisions in every AI agent: ask with sources, record decisions, give out work and check it, from ChatGPT and Codex.",
   "author": {
-    "name": "Viliha (RESOLVE LABS PTE. LTD.)",
+    "name": "RESOLVE LABS PTE. LTD.",
     "email": "support@viliha.com",
     "url": "https://viliha.com"
   },
@@ -22,14 +22,14 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "ODIN",
-    "developerName": "Viliha",
+    "developerName": "RESOLVE LABS PTE. LTD.",
     "category": "Productivity",
     "capabilities": [
       "Read",
       "Write"
     ],
     "shortDescription": "Your company's rules and decisions in every AI agent",
-    "longDescription": "ODIN holds your company's projects, rules, decisions and who does what. Ask it anything about the work and it answers from your company's record with its sources; record a decision or a note; give a task to the right person; and see what changed since you last looked. Every agent connects to the same ODIN with your Viliha account.",
+    "longDescription": "ODIN holds your company's projects, rules, decisions and who does what. Ask it anything about the work and it answers from your company's record with its sources; record a decision or a note; give a task to the right person; and see what changed since you last looked. Every agent connects to the same ODIN with your ODIN account.",
     "defaultPrompt": [
       "Ask ODIN what we decided about this, with sources",
       "What changed in my projects since yesterday?",

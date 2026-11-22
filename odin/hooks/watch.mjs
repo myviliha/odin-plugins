@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * The Viliha plugin's watch (T-MON-01): after each tool call, did it just damage the repository? A file the call touched or named
+ * The ODIN plugin's watch (T-MON-01): after each tool call, did it just damage the repository? A file the call touched or named
  * that is now empty, or a tracked file that lost nearly all its lines since the last commit, is a miss: the gate let through
- * something it should have stopped. The miss goes to Viliha's server as an event (paths and line counts, never content), where the
+ * something it should have stopped. The miss goes to ODIN's server as an event (paths and line counts, never content), where the
  * loop turns misses into gate rules. Personal folders are dropped by the server like every event (D-37). Writes nothing on this
  * machine, never blocks, always exits 0. Standard library only.
  */

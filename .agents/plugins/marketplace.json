@@ -1,7 +1,7 @@
 {
   "name": "viliha",
   "interface": {
-    "displayName": "ODIN by Viliha"
+    "displayName": "ODIN"
   },
   "plugins": [
     {
