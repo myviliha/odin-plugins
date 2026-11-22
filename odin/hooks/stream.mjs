@@ -104,6 +104,8 @@ export function askOut(hook, body) {
   const ask = body?.ask;
   const parts = [];
   if (ask?.question && ask?.id) parts.push(`ODIN asks the person, before you go on: ${ask.question} Ask them in one short line, then call odin_route_answer with id ${ask.id} and the project they choose (or personal if it is not company work).`);
+  // Another company's work was kept out (security fix 2026-11-21): the agent asks the person whose work it is.
+  if (typeof body?.foreign?.say === "string" && body.foreign.say) parts.push(body.foreign.say);
   // What colleagues noted or handed over since this person's last turn (ODIN-137).
   if (typeof body?.updates === "string" && body.updates) parts.push(body.updates);
   if (!parts.length) return null;
