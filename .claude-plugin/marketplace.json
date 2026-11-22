@@ -5,7 +5,7 @@
     "url": "https://viliha.com"
   },
   "metadata": {
-    "description": "ODIN by Viliha for Claude Code. Add with /plugin marketplace add myviliha/odin-plugins, then /plugin install odin@viliha"
+    "description": "ODIN for Claude Code. Add with /plugin marketplace add myviliha/odin-plugins, then /plugin install odin@viliha"
   },
   "plugins": [
     {
