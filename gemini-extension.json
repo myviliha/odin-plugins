@@ -1,7 +1,7 @@
 {
   "name": "odin",
-  "version": "0.5.0",
-  "description": "Your company's rules and decisions in every AI agent. By Viliha.",
+  "version": "0.6.1",
+  "description": "Your company's rules and decisions in every AI agent. By RESOLVE LABS.",
   "mcpServers": {
     "odin": {
       "httpUrl": "https://api.viliha.com/mcp"

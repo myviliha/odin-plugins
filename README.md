@@ -2,11 +2,11 @@
 
 <h1 align="center">ODIN plugins</h1>
 
-<p align="center">Your company's rules and decisions in every AI agent. By <a href="https://viliha.com">Viliha</a>.</p>
+<p align="center">Your company's rules and decisions in every AI agent. By <a href="https://viliha.com">RESOLVE LABS</a>.</p>
 
 ODIN gives your AI agents your company's projects, rules and decisions, checks each action against them before it runs, and
 records the work for your team. Every agent connects to the same hosted service, `https://api.viliha.com/mcp`, and signs in with
-your Viliha account.
+your ODIN account.
 
 ## Claude Code
 
@@ -21,7 +21,7 @@ Then sign the hooks in once, so ODIN's gate runs in every session:
 curl -fsSL https://api.viliha.com/install | sh
 ```
 
-It asks for your personal token (Viliha console, Settings, API tokens) and keeps it in the macOS Keychain, or in
+It asks for your personal token (ODIN console, Settings, API tokens) and keeps it in the macOS Keychain, or in
 `~/.config/viliha/token` readable only by you. Until it is signed in, each session tells you so at its start.
 
 ## Codex and ChatGPT
@@ -30,7 +30,7 @@ It asks for your personal token (Viliha console, Settings, API tokens) and keeps
 codex plugin marketplace add myviliha/odin-plugins
 ```
 
-Then install **ODIN** from the plugin list and sign in with your Viliha account when asked. The ChatGPT and Codex plugin
+Then install **ODIN** from the plugin list and sign in with your ODIN account when asked. The ChatGPT and Codex plugin
 directory listing is on the way; until then, in ChatGPT add a connector with the address `https://api.viliha.com/mcp`.
 
 ## Gemini CLI
@@ -39,7 +39,7 @@ directory listing is on the way; until then, in ChatGPT add a connector with the
 gemini extensions install https://github.com/myviliha/odin-plugins
 ```
 
-Gemini CLI opens your browser to sign in to Viliha the first time an ODIN tool runs.
+Gemini CLI opens your browser to sign in to ODIN the first time an ODIN tool runs.
 
 ## Any agent that reads Agent Plugins 1.0
 
@@ -68,5 +68,5 @@ details are in [odin/README.md](odin/README.md).
 
 ---
 
-ODIN is made by Viliha (RESOLVE LABS PTE. LTD., Singapore). [viliha.com](https://viliha.com) ·
+ODIN is made by RESOLVE LABS PTE. LTD., Singapore. [viliha.com](https://viliha.com) ·
 [Privacy](https://viliha.com/privacy/) · [Terms](https://viliha.com/terms/)

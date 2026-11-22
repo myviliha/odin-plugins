@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * The Viliha plugin's one hook (ODIN-61, D-33): each step of a Claude Code session (its start, a prompt, a tool used, files edited,
- * its end) is sent to Viliha's server as an event. Nothing is written on this machine: no file, no cache, no log. It never blocks
+ * The ODIN plugin's one hook (ODIN-61, D-33): each step of a Claude Code session (its start, a prompt, a tool used, files edited,
+ * its end) is sent to ODIN's server as an event. Nothing is written on this machine: no file, no cache, no log. It never blocks
  * or breaks the session: two seconds at most, silent, and it always exits 0. Metadata by default: a prompt's text is sent so the
  * server can apply the company's setting, and the server drops it unless the company keeps prompts. Only company work is kept
  * (D-37): each event carries its repository's remote, and the server drops it unless that repository is one of the person's
  * projects (or VILIHA_PROJECT names one); a personal folder is never recorded.
- *   VILIHA_TOKEN    a Viliha API token (else, on macOS, the Keychain item service "viliha", account "token")
+ *   VILIHA_TOKEN    an ODIN API token (else, on macOS, the Keychain item service "viliha", account "token")
  *   VILIHA_API      the server (default https://api.viliha.com)
  *   VILIHA_PROJECT  the project these sessions belong to (optional)
  *   VILIHA_RECORD   "off" pauses recording (the gate still asks)

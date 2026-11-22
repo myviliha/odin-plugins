@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * The Viliha plugin's relay (design research/LOCAL-EDGE-2026-11-21.md, step 1): one small process per person that keeps the
- * connection to Viliha's server open, so a hook's call costs one round trip instead of a new connection's three. The hooks reach it
+ * The ODIN plugin's relay (design research/LOCAL-EDGE-2026-11-21.md, step 1): one small process per person that keeps the
+ * connection to ODIN's server open, so a hook's call costs one round trip instead of a new connection's three. The hooks reach it
  * on a socket only this user can open; the first hook that finds no relay starts one and calls the server directly that once.
  *   - It forwards only the gate and event calls, only to the server it was started for, with the token it read once.
  *   - It keeps no rule, no record and no answer (D-27): nothing is written on the machine but its socket.

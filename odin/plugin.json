@@ -1,10 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "odin",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "description": "Your company's rules and decisions in every AI agent: ask with sources, record decisions, give out work and check it.",
   "author": {
-    "name": "Viliha (RESOLVE LABS PTE. LTD.)",
+    "name": "RESOLVE LABS PTE. LTD.",
     "email": "support@viliha.com",
     "url": "https://viliha.com"
   },
