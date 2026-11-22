@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * The Viliha plugin's gate (ODIN-35, D-27): no rule and no record on this machine. Before each tool call it asks Viliha's server
+ * The ODIN plugin's gate (ODIN-35, D-27): no rule and no record on this machine. Before each tool call it asks ODIN's server
  * "may I?" and acts on the answer; when a session starts it loads the project's context from the server. The project is found from
  * the repository's remote (or VILIHA_PROJECT). What is sent: the tool's name, the command or the file path, never a file's content.
  *   PreToolUse    POST /v1/gate: deny or ask with the server's reason; allow says nothing, so Claude Code's own permissions apply
@@ -69,14 +69,14 @@ export async function answer(input, { env = process.env, place = where, send = p
   const at = place(placeOf(input));
   if (input.hook_event_name === "SessionStart") {
     const r = await send("/v1/gate/session", { project, remote: at.remote });
-    if (r.status !== 200) return r.status === 0 ? { systemMessage: "Viliha could not be reached: this session starts without the project's context, and the gate cannot check its actions." } : null;
+    if (r.status !== 200) return r.status === 0 ? { systemMessage: "ODIN could not be reached: this session starts without the project's context, and the gate cannot check its actions." } : null;
     // Setup not finished (ODIN-136): the person sees it too, at every session's start until it is done or snoozed.
     const notice = r.body.notice?.say;
     return { ...(notice ? { systemMessage: notice } : {}), hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: r.body.context } };
   }
   if (input.hook_event_name !== "PreToolUse") return null;
   const r = await send("/v1/gate", { project, ...at, session: input.session_id ?? null, source: "claude-code", tool_name: input.tool_name, tool_input: slim(input.tool_input) });
-  if (r.status === 0) return { systemMessage: `Viliha could not be reached: ${input.tool_name} ran without the gate's check.` };
+  if (r.status === 0) return { systemMessage: `ODIN could not be reached: ${input.tool_name} ran without the gate's check.` };
   if (r.status !== 200 || r.body.decision === "allow") return null;
   return { hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: r.body.decision === "ask" ? "ask" : "deny", permissionDecisionReason: r.body.reason } };
 }
@@ -86,7 +86,7 @@ export async function answer(input, { env = process.env, place = where, send = p
 export function signedOut(input, env = process.env) {
   if (input.hook_event_name !== "SessionStart") return null;
   const api = (env.VILIHA_API ?? "https://api.viliha.com").replace(/\/+$/, "");
-  const say = `Viliha is installed but not signed in, so the gate is off: nothing checks this session's edits or records its work. Sign in with: curl -fsSL ${api}/install | sh (it asks for your Viliha token), then start a new session.`;
+  const say = `ODIN is installed but not signed in, so the gate is off: nothing checks this session's edits or records its work. Sign in with: curl -fsSL ${api}/install | sh (it asks for your ODIN token), then start a new session.`;
   return { systemMessage: say, hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: `${say} Until then, call odin_recall and odin_ask yourself before working, and tell the person once.` } };
 }
 

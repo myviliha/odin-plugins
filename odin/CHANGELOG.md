@@ -1,5 +1,9 @@
 # ODIN plugin changelog
 
+## 0.6.1 (2026-11-23)
+
+- The product is named ODIN everywhere the plugin shows text: its messages, README and manifest say ODIN, not Viliha. Settings that installs depend on are unchanged (VILIHA_TOKEN, VILIHA_API, the Keychain service, the marketplace id and `odin@viliha`).
+
 ## 0.6.0
 
 - Company Map code scanner: `/odin:map` scans the repositories under the current folder and sends their structure to ODIN's Company Map: files with sizes and hashes, imports between files, HTTP endpoints, the frontend calls that reach them, and Next.js screens. Source text and secret values are never sent.
