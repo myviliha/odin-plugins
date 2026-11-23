@@ -43,7 +43,6 @@
     "termsOfServiceURL": "https://viliha.com/terms/"
   },
   "review": {
-    "demo_recording_url": "REPLACE_WITH_DEMO_VIDEO_URL",
     "test_cases": {
       "positive": [
         {
