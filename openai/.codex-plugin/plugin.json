@@ -58,10 +58,10 @@
           "description": "Who owns a project and what is open for them",
           "prompt": "Who owns the sample project, and what is open for them this week?",
           "tools_triggered": [
-            "odin_who",
-            "odin_actions"
+            "odin_projects",
+            "odin_ask"
           ],
-          "expected_behavior": "Names the owner by role from the sample company and lists their open actions, most important first."
+          "expected_behavior": "Asks ODIN about the sample project and names its owner by role (Maya Chen, product owner) with the open bug BUG-1, each cited as a file and line from the sample record."
         },
         {
           "description": "Next steps for new work, with owners",
@@ -85,7 +85,7 @@
           "tools_triggered": [
             "odin_read"
           ],
-          "expected_behavior": "Reads the project's rule card from the record and lists its rules, citing the document."
+          "expected_behavior": "Reads the project's rule card (engineering/CARDS.md) from the sample record and lists its rules, citing the document."
         }
       ],
       "negative": [
