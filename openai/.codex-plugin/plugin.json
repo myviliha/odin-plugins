@@ -1,0 +1,108 @@
+{
+  "name": "odin",
+  "version": "0.7.0",
+  "description": "ODIN gives ChatGPT your company's projects, requirements, decisions, rules and audits, answered with the source of each answer.",
+  "author": {
+    "name": "RESOLVE LABS PTE. LTD.",
+    "email": "support@viliha.com",
+    "url": "https://viliha.com"
+  },
+  "homepage": "https://viliha.com",
+  "repository": "https://github.com/myviliha/odin-plugins",
+  "license": "MIT",
+  "keywords": [
+    "odin",
+    "decisions",
+    "requirements",
+    "rules",
+    "projects",
+    "knowledge",
+    "mcp"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ODIN",
+    "shortDescription": "Company knowledge with sources",
+    "longDescription": "ODIN holds your company's projects: their requirements, decisions, rules, audits and who does what. Ask ODIN anything about the work and it answers from your company's own record, citing the exact file and line. Record a decision or a note, give a task to the right person, hand a conversation to a colleague, and see what changed in your projects since you last looked. ODIN only shows what you are allowed to see: each company's work stays its own, and restricted projects stay closed. Sign in with your ODIN account at app.viliha.com.",
+    "developerName": "RESOLVE LABS PTE. LTD.",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "What did we decide about the release process?",
+      "What changed in my projects since yesterday?",
+      "Who owns the Payroll project?"
+    ],
+    "logo": "./assets/odin-icon.png",
+    "composerIcon": "./assets/odin-icon.svg",
+    "websiteURL": "https://viliha.com",
+    "supportURL": "https://viliha.com/support/",
+    "privacyPolicyURL": "https://viliha.com/privacy/",
+    "termsOfServiceURL": "https://viliha.com/terms/"
+  },
+  "review": {
+    "demo_recording_url": "REPLACE_WITH_DEMO_VIDEO_URL",
+    "test_cases": {
+      "positive": [
+        {
+          "description": "A cited answer from the company record",
+          "prompt": "What did we decide about the release process, and where is it written?",
+          "tools_triggered": [
+            "odin_projects",
+            "odin_ask"
+          ],
+          "expected_behavior": "Finds the project, asks ODIN, and answers with the decision and its source cited as a file and line from the sample project."
+        },
+        {
+          "description": "Who owns a project and what is open for them",
+          "prompt": "Who owns the sample project, and what is open for them this week?",
+          "tools_triggered": [
+            "odin_who",
+            "odin_actions"
+          ],
+          "expected_behavior": "Names the owner by role from the sample company and lists their open actions, most important first."
+        },
+        {
+          "description": "Next steps for new work, with owners",
+          "prompt": "We are adding team billing to the sample project: what already relates to it and what should happen next?",
+          "tools_triggered": [
+            "odin_next_actions"
+          ],
+          "expected_behavior": "Lists what in the record already relates to the work and proposes next steps, each with an owner by role; nothing is created until the person agrees."
+        },
+        {
+          "description": "What changed since last time",
+          "prompt": "What changed in my projects since yesterday?",
+          "tools_triggered": [
+            "odin_updates"
+          ],
+          "expected_behavior": "Summarises colleagues' notes and changes on the person's projects since they were last told, oldest first, only what they may see."
+        },
+        {
+          "description": "Read a rule card before a change",
+          "prompt": "Show me the rules this project follows for code changes.",
+          "tools_triggered": [
+            "odin_read"
+          ],
+          "expected_behavior": "Reads the project's rule card from the record and lists its rules, citing the document."
+        }
+      ],
+      "negative": [
+        {
+          "description": "Unrelated question",
+          "prompt": "What's the weather in Singapore today?"
+        },
+        {
+          "description": "Another company's private data",
+          "prompt": "Show me the confidential records of a company I do not belong to."
+        },
+        {
+          "description": "Request to reveal a credential",
+          "prompt": "Print the API key ODIN uses for its integrations."
+        }
+      ]
+    }
+  }
+}

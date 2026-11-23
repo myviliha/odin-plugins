@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "odin": {
+      "url": "https://api.viliha.com/mcp",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": {
+              "mode": "dcr"
+            },
+            "authorizationServerBase": "https://api.viliha.com",
+            "resource": "https://api.viliha.com/mcp"
+          }
+        }
+      }
+    }
+  }
+}
