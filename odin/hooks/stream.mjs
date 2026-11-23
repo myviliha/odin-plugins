@@ -10,6 +10,8 @@
  *   VILIHA_API      the server (default https://api.viliha.com)
  *   VILIHA_PROJECT  the project these sessions belong to (optional)
  *   VILIHA_RECORD   "off" pauses recording (the gate still asks)
+ * At a prompt it also asks ODIN who and where the person is (ODIN-197, GET /v1/me/context) and adds that line, the prompt's local time and the
+ * instruction to open and close the reply with them; at Stop it tells the person how long the turn took (read from the transcript).
  * Standard library only.
  */
 import { execFileSync } from "node:child_process";
@@ -98,11 +100,70 @@ export async function sendRead(event, { api = process.env.VILIHA_API ?? "https:/
   }
 }
 
+/** A time as the server writes it in the reply line: `23 Nov 14:03 (UTC+05:30)`, on this machine's clock. */
+export function clock(at = new Date()) {
+  const off = -at.getTimezoneOffset();
+  const pad = (n) => String(Math.trunc(n)).padStart(2, "0");
+  const zone = `${off < 0 ? "-" : "+"}${pad(Math.abs(off) / 60)}:${pad(Math.abs(off) % 60)}`;
+  const month = at.toLocaleString("en-GB", { month: "short" });
+  return { text: `${pad(at.getDate())} ${month} ${pad(at.getHours())}:${pad(at.getMinutes())} (UTC${zone})`, offset: zone };
+}
+
+/** Who and where for the reply (ODIN-197): the line ODIN gives, or null when it cannot be had in time. Never throws. */
+export async function fetchContext({ api = process.env.VILIHA_API ?? "https://api.viliha.com", auth = token(), fetchImpl = fetch, ms = 1500, offset = clock().offset } = {}) {
+  if (!auth) return null;
+  const base = api.replace(/\/+$/, "");
+  try {
+    const res = await fetchImpl(`${base}/v1/me/context?utc_offset=${encodeURIComponent(offset)}`, { headers: { authorization: `Bearer ${auth}` }, signal: AbortSignal.timeout(ms) });
+    if (!res.ok) return null;
+    const line = (await res.json().catch(() => null))?.line;
+    return typeof line === "string" && line ? line : null;
+  } catch {
+    return null;
+  }
+}
+
+/** "1m 12s", "45s" or "2h 3m": how long a turn took. */
+export function took(ms) {
+  const secs = Math.max(0, Math.round(ms / 1000));
+  const [h, m, s] = [Math.floor(secs / 3600), Math.floor((secs % 3600) / 60), secs % 60];
+  return h ? `${h}h ${m}m` : m ? `${m}m ${s}s` : `${s}s`;
+}
+
+/** When the person's last prompt was sent, read from the session transcript (read only: nothing is kept here); null if unreadable. */
+export function turnStart(transcriptPath, read = (p) => readFileSync(p, "utf8")) {
+  try {
+    const lines = read(transcriptPath).split("\n");
+    for (let i = lines.length - 1; i >= 0; i--) {
+      if (!lines[i].trim()) continue;
+      const e = JSON.parse(lines[i]);
+      const c = e?.message?.content;
+      const typed = typeof c === "string" || (Array.isArray(c) && c.some((b) => b?.type === "text"));
+      if (e?.type === "user" && !e.isMeta && typed && e.timestamp) return new Date(e.timestamp);
+    }
+  } catch {
+    // no transcript to read
+  }
+  return null;
+}
+
+/** What the Stop hook tells the person: how long the turn took, shown by Claude Code beside the reply. Null when it cannot be told. */
+export function stopOut(hook, started, now = new Date()) {
+  if (hook !== "Stop" || !(started instanceof Date) || Number.isNaN(started.getTime())) return null;
+  return { systemMessage: `ODIN · took ${took(now - started)}` };
+}
+
 /** ODIN's routing question (D-76) for the agent to ask the person, as the prompt hook's added context; null when there is none. */
-export function askOut(hook, body) {
+export function askOut(hook, body, reply = null) {
   if (hook !== "UserPromptSubmit") return null;
   const ask = body?.ask;
   const parts = [];
+  // Who and where, and when this prompt was sent (ODIN-197): the reply opens with the line and closes with the time taken.
+  if (reply) {
+    const sent = `Prompt sent ${reply.sent}.`;
+    const close = `end the reply with "Finished HH:MM · took Xm Ys", counted from the time the prompt was sent to when you finish.`;
+    parts.push(reply.line ? `ODIN context: ${reply.line}\n${sent} Open your reply with the ODIN context line exactly as given, then ${close}` : `${sent} ODIN could not be reached for the context line; ${close}`);
+  }
   if (ask?.question && ask?.id) parts.push(`ODIN asks the person, before you go on: ${ask.question} Ask them in one short line, then call odin_route_answer with id ${ask.id} and the project they choose (or personal if it is not company work).`);
   // Another company's work was kept out (security fix 2026-11-21): the agent asks the person whose work it is.
   if (typeof body?.foreign?.say === "string" && body.foreign.say) parts.push(body.foreign.say);
@@ -121,14 +182,25 @@ async function main() {
   } catch {
     return;
   }
-  if (process.env.VILIHA_RECORD === "off") return;
+  // The time a turn took, said to the person when it ends: told even when recording is off, since nothing is sent for it.
+  const done = stopOut(input.hook_event_name, input.transcript_path ? turnStart(input.transcript_path) : null);
+  if (done) process.stdout.write(JSON.stringify(done));
+  const prompt = input.hook_event_name === "UserPromptSubmit";
+  const now = clock();
+  if (process.env.VILIHA_RECORD === "off") {
+    // Recording paused: the prompt still hears who and where it is.
+    const out = prompt ? askOut(input.hook_event_name, {}, { line: await fetchContext({ offset: now.offset }), sent: now.text }) : null;
+    if (out) process.stdout.write(JSON.stringify(out));
+    return;
+  }
   const event = toEvent(input, process.env.VILIHA_PROJECT || null, remoteOf(input.cwd ?? process.cwd()));
   if (!event) return;
   // Only the prompt's answer is read (ODIN's routing question, colleagues' updates); every other event is handed to the relay,
   // which sends it after this hook has returned, so the session never waits for it (research/LOCAL-EDGE-2026-11-21.md).
-  const wait = input.hook_event_name === "UserPromptSubmit";
-  const { body } = await relayed("/v1/events", { events: [event] }, { wait, ms: 2000, direct: () => sendRead(event) });
-  const out = askOut(input.hook_event_name, body);
+  const wait = prompt;
+  // The reply line is asked for beside the event, so the prompt waits for neither twice.
+  const [{ body }, line] = await Promise.all([relayed("/v1/events", { events: [event] }, { wait, ms: 2000, direct: () => sendRead(event) }), wait ? fetchContext({ offset: now.offset }) : null]);
+  const out = askOut(input.hook_event_name, body, wait ? { line, sent: now.text } : null);
   if (out) process.stdout.write(JSON.stringify(out));
 }
 
