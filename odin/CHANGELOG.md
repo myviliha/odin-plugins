@@ -1,5 +1,9 @@
 # ODIN plugin changelog
 
+## 0.7.2 (2026-11-24)
+
+- Your rules travel with you (ODIN-254): `/odin:export` writes the project's accepted rules and decisions from ODIN into AGENTS.md, CLAUDE.md and Cursor's rules as one marked block, and `/odin:import` proposes the instructions already in those files to ODIN as drafts for a person to accept.
+
 ## 0.7.1 (2026-11-24)
 
 - You never have to say "use ODIN" (ODIN-240): every prompt now carries ODIN's short lead for the agent: on a new task, recall what is known and ask the project's rules before planning, think a recommendation through, and get the brief before building a screen. ODIN's server writes the lead and leaves it out while ODIN is paused.
