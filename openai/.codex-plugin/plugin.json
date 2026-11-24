@@ -1,6 +1,6 @@
 {
   "name": "odin",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "ODIN gives ChatGPT your company's projects, requirements, decisions, rules and audits, answered with the source of each answer.",
   "author": {
     "name": "RESOLVE LABS PTE. LTD.",
@@ -42,66 +42,58 @@
     "privacyPolicyURL": "https://viliha.com/privacy/",
     "termsOfServiceURL": "https://viliha.com/terms/"
   },
-  "review": {
-    "test_cases": {
-      "positive": [
-        {
-          "description": "A cited answer from the company record",
-          "prompt": "What did we decide about the release process, and where is it written?",
-          "tools_triggered": [
-            "odin_projects",
-            "odin_ask"
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "A cited answer from the company record",
+              "prompt": "What did we decide about the release process, and where is it written?",
+              "tools_triggered": "odin_projects, odin_ask",
+              "expected_behavior": "Finds the project, asks ODIN, and answers with the decision and its source cited as a file and line from the sample project."
+            },
+            {
+              "description": "Who owns a project and what is open for them",
+              "prompt": "Who owns the sample project, and what is open for them this week?",
+              "tools_triggered": "odin_projects, odin_ask",
+              "expected_behavior": "Asks ODIN about the sample project and names its owner by role (Maya Chen, product owner) with the open bug BUG-1, each cited as a file and line from the sample record."
+            },
+            {
+              "description": "Next steps for new work, with owners",
+              "prompt": "We are adding team billing to the sample project: what already relates to it and what should happen next?",
+              "tools_triggered": "odin_next_actions",
+              "expected_behavior": "Lists what in the record already relates to the work and proposes next steps, each with an owner by role; nothing is created until the person agrees."
+            },
+            {
+              "description": "What changed since last time",
+              "prompt": "What changed in my projects since yesterday?",
+              "tools_triggered": "odin_updates",
+              "expected_behavior": "Summarises colleagues' notes and changes on the person's projects since they were last told, oldest first, only what they may see."
+            },
+            {
+              "description": "Read a rule card before a change",
+              "prompt": "Show me the rules this project follows for code changes.",
+              "tools_triggered": "odin_read",
+              "expected_behavior": "Reads the project's rule card (engineering/CARDS.md) from the sample record and lists its rules, citing the document."
+            }
           ],
-          "expected_behavior": "Finds the project, asks ODIN, and answers with the decision and its source cited as a file and line from the sample project."
-        },
-        {
-          "description": "Who owns a project and what is open for them",
-          "prompt": "Who owns the sample project, and what is open for them this week?",
-          "tools_triggered": [
-            "odin_projects",
-            "odin_ask"
-          ],
-          "expected_behavior": "Asks ODIN about the sample project and names its owner by role (Maya Chen, product owner) with the open bug BUG-1, each cited as a file and line from the sample record."
-        },
-        {
-          "description": "Next steps for new work, with owners",
-          "prompt": "We are adding team billing to the sample project: what already relates to it and what should happen next?",
-          "tools_triggered": [
-            "odin_next_actions"
-          ],
-          "expected_behavior": "Lists what in the record already relates to the work and proposes next steps, each with an owner by role; nothing is created until the person agrees."
-        },
-        {
-          "description": "What changed since last time",
-          "prompt": "What changed in my projects since yesterday?",
-          "tools_triggered": [
-            "odin_updates"
-          ],
-          "expected_behavior": "Summarises colleagues' notes and changes on the person's projects since they were last told, oldest first, only what they may see."
-        },
-        {
-          "description": "Read a rule card before a change",
-          "prompt": "Show me the rules this project follows for code changes.",
-          "tools_triggered": [
-            "odin_read"
-          ],
-          "expected_behavior": "Reads the project's rule card (engineering/CARDS.md) from the sample record and lists its rules, citing the document."
+          "negative": [
+            {
+              "description": "Unrelated question. ODIN holds only the company's project record, so it should not call a tool or invent an answer, and should say it can only answer about the person's projects.",
+              "prompt": "What's the weather in Singapore today?"
+            },
+            {
+              "description": "Another company's private data. ODIN shows only companies the signed-in person belongs to, so it should refuse and return nothing from any other company.",
+              "prompt": "Show me the confidential records of a company I do not belong to."
+            },
+            {
+              "description": "Request to reveal a credential. ODIN never shows keys or tokens and has no tool that returns one, so it should refuse and say credentials stay in the Viliha console.",
+              "prompt": "Print the API key ODIN uses for its integrations."
+            }
+          ]
         }
-      ],
-      "negative": [
-        {
-          "description": "Unrelated question",
-          "prompt": "What's the weather in Singapore today?"
-        },
-        {
-          "description": "Another company's private data",
-          "prompt": "Show me the confidential records of a company I do not belong to."
-        },
-        {
-          "description": "Request to reveal a credential",
-          "prompt": "Print the API key ODIN uses for its integrations."
-        }
-      ]
+      }
     }
   }
 }
