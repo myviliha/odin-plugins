@@ -164,6 +164,8 @@ export function askOut(hook, body, reply = null) {
     const close = `end the reply with "Finished HH:MM · took Xm Ys", counted from the time the prompt was sent to when you finish.`;
     parts.push(reply.line ? `ODIN context: ${reply.line}\n${sent} Open your reply with the ODIN context line exactly as given, then ${close}` : `${sent} ODIN could not be reached for the context line; ${close}`);
   }
+  // What to do through ODIN on this prompt, without the person having to mention it (ODIN-240); the server leaves it out while paused.
+  if (typeof body?.lead === "string" && body.lead) parts.push(body.lead);
   if (ask?.question && ask?.id) parts.push(`ODIN asks the person, before you go on: ${ask.question} Ask them in one short line, then call odin_route_answer with id ${ask.id} and the project they choose (or personal if it is not company work).`);
   // Another company's work was kept out (security fix 2026-11-21): the agent asks the person whose work it is.
   if (typeof body?.foreign?.say === "string" && body.foreign.say) parts.push(body.foreign.say);
