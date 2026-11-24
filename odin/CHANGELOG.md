@@ -1,5 +1,9 @@
 # ODIN plugin changelog
 
+## 0.7.1 (2026-11-24)
+
+- You never have to say "use ODIN" (ODIN-240): every prompt now carries ODIN's short lead for the agent: on a new task, recall what is known and ask the project's rules before planning, think a recommendation through, and get the brief before building a screen. ODIN's server writes the lead and leaves it out while ODIN is paused.
+
 ## 0.7.0 (2026-11-23)
 
 - Every reply shows who and where (ODIN-197): at each prompt the plugin asks ODIN for the context line (company, project, space, your name, email and role, the time ODIN received the prompt) and hands it to the agent with the prompt's local time, to open the reply with. The agent closes the reply with "Finished HH:MM · took Xm Ys". If ODIN cannot be reached in time the prompt carries only its time and the closing instruction.
