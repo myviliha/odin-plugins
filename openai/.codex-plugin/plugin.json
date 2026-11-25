@@ -1,6 +1,6 @@
 {
   "name": "odin",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "ODIN gives ChatGPT your company's projects, requirements, decisions, rules and audits, answered with the source of each answer.",
   "author": {
     "name": "RESOLVE LABS PTE. LTD.",
@@ -23,7 +23,7 @@
   "interface": {
     "displayName": "ODIN",
     "shortDescription": "Company knowledge with sources",
-    "longDescription": "ODIN holds your company's projects: their requirements, decisions, rules, audits and who does what. Ask ODIN anything about the work and it answers from your company's own record, citing the exact file and line. Record a decision or a note, give a task to the right person, hand a conversation to a colleague, and see what changed in your projects since you last looked. ODIN only shows what you are allowed to see: each company's work stays its own, and restricted projects stay closed. Sign in with your ODIN account at app.viliha.com.",
+    "longDescription": "ODIN holds your company's projects: their requirements, decisions, rules, audits and who does what. Ask ODIN anything about the work and it answers from your company's own record, citing where each passage comes from: the record's file and line, or the document's link. Record a decision or a note, give a task to the right person, hand a conversation to a colleague, and see what changed in your projects since you last looked. ODIN only shows what you are allowed to see: each company's work stays its own, and restricted projects stay closed. Sign in with your ODIN account at app.viliha.com.",
     "developerName": "RESOLVE LABS PTE. LTD.",
     "category": "Productivity",
     "capabilities": [
@@ -51,13 +51,13 @@
               "description": "A cited answer from the company record",
               "prompt": "What did we decide about the release process, and where is it written?",
               "tools_triggered": "odin_projects, odin_ask",
-              "expected_behavior": "Finds the project, asks ODIN, and answers with the decision and its source cited as a file and line from the sample project."
+              "expected_behavior": "Finds the project, asks ODIN, and answers with the decision and its source cited with its source from the sample project (a file and line of the record)."
             },
             {
               "description": "Who owns a project and what is open for them",
               "prompt": "Who owns the sample project, and what is open for them this week?",
               "tools_triggered": "odin_projects, odin_ask",
-              "expected_behavior": "Asks ODIN about the sample project and names its owner by role (Maya Chen, product owner) with the open bug BUG-1, each cited as a file and line from the sample record."
+              "expected_behavior": "Asks ODIN about the sample project and names its owner by role (Maya Chen, product owner) with the open bug BUG-1, each cited with its source from the sample record."
             },
             {
               "description": "Next steps for new work, with owners",

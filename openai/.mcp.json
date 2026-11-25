@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "odin": {
-      "url": "https://api.viliha.com/mcp",
+      "url": "https://api.viliha.com/mcp?profile=store",
       "extensions": {
         "com.openai": {
           "auth": {
