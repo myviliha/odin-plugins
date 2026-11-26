@@ -39,8 +39,12 @@ export function toEvent(input, project = process.env.VILIHA_PROJECT || null, rem
       if (EDITS.has(tool)) return { ...base, kind: "edit", summary: `${tool} ${file ? basename(file) : ""}`.trim(), detail: { tool, file: file ? basename(file) : null } };
       return { ...base, kind: "tool", summary: tool, detail: { tool } };
     }
-    case "Stop":
-      return { ...base, kind: "finish", summary: "session turn finished", detail: {} };
+    case "Stop": {
+      // What the agent concluded (ODIN-340), so the next session continues from it; the server keeps the text only when the company
+      // keeps prompts, like a prompt's.
+      const said = input.transcript_path ? lastAnswer(input.transcript_path) : null;
+      return { ...base, kind: "finish", summary: "session turn finished", ...(said ? { text: said } : {}), detail: {} };
+    }
     default:
       return null;
   }
@@ -140,6 +144,24 @@ export function turnStart(transcriptPath, read = (p) => readFileSync(p, "utf8"))
       const c = e?.message?.content;
       const typed = typeof c === "string" || (Array.isArray(c) && c.some((b) => b?.type === "text"));
       if (e?.type === "user" && !e.isMeta && typed && e.timestamp) return new Date(e.timestamp);
+    }
+  } catch {
+    // no transcript to read
+  }
+  return null;
+}
+
+/** The agent's last answer in the session transcript, at most 2,000 characters (read only); null if unreadable (ODIN-340). */
+export function lastAnswer(transcriptPath, read = (p) => readFileSync(p, "utf8"), max = 2000) {
+  try {
+    const lines = read(transcriptPath).split("\n");
+    for (let i = lines.length - 1; i >= 0; i--) {
+      if (!lines[i].trim()) continue;
+      const e = JSON.parse(lines[i]);
+      if (e?.type !== "assistant") continue;
+      const c = e?.message?.content;
+      const t = typeof c === "string" ? c : Array.isArray(c) ? c.filter((b) => b?.type === "text").map((b) => b.text).join("\n") : "";
+      if (t.trim()) return t.trim().slice(0, max);
     }
   } catch {
     // no transcript to read
