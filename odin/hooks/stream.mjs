@@ -175,6 +175,40 @@ export function stopOut(hook, started, now = new Date()) {
   return { systemMessage: `ODIN · took ${took(now - started)}` };
 }
 
+/**
+ * Whether this turn changed the work without keeping the working state (ODIN-343): it edited files or committed, pushed, merged or
+ * released, and never called odin_update_working_state. Read from the transcript since the person's last prompt (read only).
+ */
+export function stateOwed(transcriptPath, read = (p) => readFileSync(p, "utf8")) {
+  try {
+    const lines = read(transcriptPath).split("\n").filter((l) => l.trim());
+    let changed = false;
+    let kept = false;
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const e = JSON.parse(lines[i]);
+      const c = e?.message?.content;
+      if (e?.type === "user" && !e.isMeta && (typeof c === "string" || (Array.isArray(c) && c.some((b) => b?.type === "text")))) break;
+      if (e?.type !== "assistant" || !Array.isArray(c)) continue;
+      for (const b of c) {
+        if (b?.type !== "tool_use") continue;
+        const name = String(b.name ?? "");
+        if (name.endsWith("odin_update_working_state")) kept = true;
+        if (EDITS.has(name)) changed = true;
+        if (name === "Bash" && /\bgit\s+(commit|push|merge)\b|\bglab\s+mr\s+(create|merge)\b|\bgh\s+pr\s+(create|merge)\b/.test(String(b.input?.command ?? ""))) changed = true;
+      }
+    }
+    return changed && !kept;
+  } catch {
+    return false;
+  }
+}
+
+/** The Stop hook's answer when the working state is owed: the turn continues once, to update it (never twice in a row). */
+export function stateOut(hook, owed, again) {
+  if (hook !== "Stop" || !owed || again) return null;
+  return { decision: "block", reason: "ODIN: this turn changed the work. Before finishing, call odin_update_working_state with the sections that moved (in_flight, decided, waiting, next_step, how_to, avoid), so the next session in any agent continues without rethinking. Then finish." };
+}
+
 /** ODIN's routing question (D-76) for the agent to ask the person, as the prompt hook's added context; null when there is none. */
 export function askOut(hook, body, reply = null) {
   if (hook !== "UserPromptSubmit") return null;
@@ -208,7 +242,10 @@ async function main() {
   }
   // The time a turn took, said to the person when it ends: told even when recording is off, since nothing is sent for it.
   const done = stopOut(input.hook_event_name, input.transcript_path ? turnStart(input.transcript_path) : null);
-  if (done) process.stdout.write(JSON.stringify(done));
+  // The working state is kept before a turn that changed the work ends (ODIN-343), unless recording is off.
+  const owed = process.env.VILIHA_RECORD !== "off" && input.hook_event_name === "Stop" && input.transcript_path ? stateOwed(input.transcript_path) : false;
+  const hold = stateOut(input.hook_event_name, owed, input.stop_hook_active === true);
+  if (done || hold) process.stdout.write(JSON.stringify({ ...(done ?? {}), ...(hold ?? {}) }));
   const prompt = input.hook_event_name === "UserPromptSubmit";
   const now = clock();
   if (process.env.VILIHA_RECORD === "off") {

@@ -4,6 +4,7 @@
 
 - The same context in every folder (ODIN-338): a session started in a folder that is not a repository (such as ~/Documents/projects) sends the remotes of the repositories in its subfolders, so ODIN starts it in their company and project. Only the remotes are read.
 - A new session continues where you left off (ODIN-340): when a turn ends, the agent's last answer (at most 2,000 characters, read from the session transcript) is sent with the turn's end, so ODIN can hand it to your next session. The server keeps it only when your company keeps prompts.
+- The working state is kept (ODIN-343): a turn that edited files or committed, pushed, merged or opened a merge request asks the agent, once, to update your working state (odin_update_working_state) before it ends, so your next session in any agent continues without rethinking.
 
 ## 0.7.2 (2026-11-24)
 
