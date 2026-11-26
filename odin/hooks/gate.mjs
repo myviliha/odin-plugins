@@ -9,10 +9,10 @@
  * project of theirs, or no token, and the plugin stays out of the way. Nothing is written on this machine. Standard library only.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { dirname, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { dirname, join, resolve } from "node:path";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import { relayed } from "./relay.mjs";
 import { token } from "./stream.mjs";
 
@@ -36,6 +36,35 @@ export function where(cwd, run = git) {
 }
 
 /**
+ * The repositories in a folder's subfolders, two levels down at most (ODIN-338): a session started in a folder that is not a
+ * repository (such as ~/Documents/projects) still finds its company and project from the repositories it holds. Only their remotes
+ * are read; at most 40, hidden folders and node_modules skipped.
+ */
+export function remotesBelow(cwd, run = git, list = (d) => readdirSync(d, { withFileTypes: true }), max = 40) {
+  const found = [];
+  const walk = (dir, depth) => {
+    if (found.length >= max || depth > 2) return;
+    let entries = [];
+    try {
+      entries = list(dir);
+    } catch {
+      return;
+    }
+    for (const e of entries) {
+      if (found.length >= max) return;
+      if (!e.isDirectory() || e.name.startsWith(".") || e.name === "node_modules") continue;
+      const sub = join(dir, e.name);
+      if (existsSync(join(sub, ".git"))) {
+        const r = run(sub, ["remote", "get-url", "origin"]);
+        if (r && !found.includes(r)) found.push(r);
+      } else walk(sub, depth + 1);
+    }
+  };
+  walk(cwd, 1);
+  return found;
+}
+
+/**
  * The folder a tool call acts in: the file's own folder (or its nearest existing parent, for a new file), the folder a command
  * starts with `cd` into, else the session's. A session started above the repositories is checked like one started inside them.
  */
@@ -53,6 +82,15 @@ export function placeOf(input, exists = existsSync) {
   return dir;
 }
 
+/** This plugin's version, from its manifest beside the hooks (ODIN-350); null if unreadable. */
+export function pluginVersion() {
+  try {
+    return JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "..", ".claude-plugin", "plugin.json"), "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** POST to the server: `{ status, body }`, status 0 when it could not be reached in time. Never throws. */
 export async function post(path, body, { api = process.env.VILIHA_API ?? "https://api.viliha.com", auth = token(), fetchImpl = fetch, ms = 3000 } = {}) {
   try {
@@ -68,7 +106,9 @@ export async function answer(input, { env = process.env, place = where, send = p
   const project = env.VILIHA_PROJECT || null;
   const at = place(placeOf(input));
   if (input.hook_event_name === "SessionStart") {
-    const r = await send("/v1/gate/session", { project, remote: at.remote });
+    // Started above the repositories: send theirs, so the session starts in their company and project (ODIN-338).
+    const remotes = at.remote || project ? [] : remotesBelow(placeOf(input));
+    const r = await send("/v1/gate/session", { project, remote: at.remote, remotes, plugin: pluginVersion() });
     if (r.status !== 200) return r.status === 0 ? { systemMessage: "ODIN could not be reached: this session starts without the project's context, and the gate cannot check its actions." } : null;
     // Setup not finished (ODIN-136): the person sees it too, at every session's start until it is done or snoozed.
     const notice = r.body.notice?.say;
