@@ -1,5 +1,9 @@
 # ODIN plugin changelog
 
+## 0.7.3 (2026-11-26)
+
+- The same context in every folder (ODIN-338): a session started in a folder that is not a repository (such as ~/Documents/projects) sends the remotes of the repositories in its subfolders, so ODIN starts it in their company and project. Only the remotes are read.
+
 ## 0.7.2 (2026-11-24)
 
 - Your rules travel with you (ODIN-254): `/odin:export` writes the project's accepted rules and decisions from ODIN into AGENTS.md, CLAUDE.md and Cursor's rules as one marked block, and `/odin:import` proposes the instructions already in those files to ODIN as drafts for a person to accept.
