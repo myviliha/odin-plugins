@@ -1,6 +1,6 @@
 {
   "name": "odin",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "ODIN: your company's projects, rules and decisions in every Claude Code session. It checks each action before it runs, records the work for your team, and reports damage.",
   "author": {
     "name": "RESOLVE LABS PTE. LTD.",
