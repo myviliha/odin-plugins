@@ -9,10 +9,10 @@
  * project of theirs, or no token, and the plugin stays out of the way. Nothing is written on this machine. Standard library only.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import { relayed } from "./relay.mjs";
 import { token } from "./stream.mjs";
 
@@ -82,6 +82,15 @@ export function placeOf(input, exists = existsSync) {
   return dir;
 }
 
+/** This plugin's version, from its manifest beside the hooks (ODIN-350); null if unreadable. */
+export function pluginVersion() {
+  try {
+    return JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "..", ".claude-plugin", "plugin.json"), "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** POST to the server: `{ status, body }`, status 0 when it could not be reached in time. Never throws. */
 export async function post(path, body, { api = process.env.VILIHA_API ?? "https://api.viliha.com", auth = token(), fetchImpl = fetch, ms = 3000 } = {}) {
   try {
@@ -99,7 +108,7 @@ export async function answer(input, { env = process.env, place = where, send = p
   if (input.hook_event_name === "SessionStart") {
     // Started above the repositories: send theirs, so the session starts in their company and project (ODIN-338).
     const remotes = at.remote || project ? [] : remotesBelow(placeOf(input));
-    const r = await send("/v1/gate/session", { project, remote: at.remote, remotes });
+    const r = await send("/v1/gate/session", { project, remote: at.remote, remotes, plugin: pluginVersion() });
     if (r.status !== 200) return r.status === 0 ? { systemMessage: "ODIN could not be reached: this session starts without the project's context, and the gate cannot check its actions." } : null;
     // Setup not finished (ODIN-136): the person sees it too, at every session's start until it is done or snoozed.
     const notice = r.body.notice?.say;
