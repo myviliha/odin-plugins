@@ -1,5 +1,10 @@
 # ODIN plugin changelog
 
+## 0.7.5 (2026-11-27)
+
+- `/odin:help` (ODIN-360): every ODIN command with what it does, read from the plugin's own command files so the list never drifts, plus the plugin version and where the guide is.
+- `/odin:version` works (ODIN-357): it read the plugin folder from an environment variable the command shell does not have and crashed, and Claude Code refused the served-version line's `${VILIHA_API:-...}`. Both lines now run in node, with the plugin folder passed in and `~/.viliha/plugin/odin` as the fallback.
+
 ## 0.7.4 (2026-11-26)
 
 - `/odin:version` (ODIN-350): the plugin version on this machine, the one ODIN serves for install, and the one-line update when it is behind. The session start also sends the plugin's version, so ODIN says when this machine is behind.
